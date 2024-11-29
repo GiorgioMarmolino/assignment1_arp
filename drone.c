@@ -8,6 +8,7 @@
 #define FORCE_MODULE 1.0 
 #define T 0.5
 #define MAXFREP 15 
+#define N_OBS 10 
 
 typedef struct { 
     int x;
@@ -85,7 +86,7 @@ void update_drone(Drone *dr, int max_x, int max_y, float dt, Obstacle obstacle[]
     float frictionForceX = calculateFrictionForce(dr->vx);
     float frictionForceY = calculateFrictionForce(dr->vy);
 
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i<N_OBS; i++){
         float rho = sqrt(pow(dr->x - obstacle[i].x, 2) + pow(dr->y - obstacle[i].y, 2));
         if (rho < rho0) {
             fx_obs += calculateRepulsiveForcex(*dr, obstacle[i].x, obstacle[i].y);
@@ -113,13 +114,13 @@ void update_drone(Drone *dr, int max_x, int max_y, float dt, Obstacle obstacle[]
 void handle_input(int ch, Drone *dr) {
     switch (ch) {
         case 'w': dr->fy -= 1.0; break;
-        //case 'e': dr->fy -= sqrt(2)/2; dr->fx += sqrt(2)/2; break; 
+        case 'e': dr->fy -= 1.0; dr->fx +=1.0; break; 
         case 'd': dr->fx += 1.0; break; 
-        //case 'x': dr->fy += sqrt(2)/2; dr->fx += sqrt(2)/2; break; 
+        case 'x': dr->fy += 1.0; dr->fx += 1.0; break; 
         case 's': dr->fy += 1.0; break; 
-        //case 'z': dr->fy += sqrt(2)/2; dr->fx -= sqrt(2)/2;break; 
+        case 'z': dr->fy += 1.0; dr->fx -= 1.0;break; 
         case 'a': dr->fx -= 1.0; break; 
-        //case 'q': dr->fy -= sqrt(2)/2; dr->fx -= sqrt(2)/2; break; 
+        case 'q': dr->fy -= 1.0; dr->fx -= 1.0; break; 
         
         case ' ': dr->vx = 0.0; dr->vy = 0.0; dr->fx = 0.0; dr->fy = 0.0; break; // Ferma tutto
     }
@@ -130,7 +131,7 @@ void render_drone(Drone dr) {
 }
 
 void render_obstacles(Obstacle obs[]) {
-    for(int i=0; i<5; i++){
+    for(int i=0; i<N_OBS; i++){
         mvprintw(obs[i].y, obs[i].x, "#");
     }
 }
@@ -154,7 +155,7 @@ int main(int argc, char* argv[]){
     int y0 = max_y/2;
 
     Obstacle obstacle[5];
-    for(int i=0; i<5; i++){
+    for(int i=0; i<N_OBS; i++){
         obstacle[i] = random_position(max_y, max_x);
     }
       
